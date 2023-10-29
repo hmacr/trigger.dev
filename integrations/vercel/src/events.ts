@@ -5,6 +5,8 @@ import {
   DeploymentErrorEventPayload,
   DeploymentReadyEventPayload,
   DeploymentSucceededEventPayload,
+  DomainCreatedEventPayload,
+  IntegrationConfigScopeChangeConfirmedEventPayload,
   ProjectCreatedEventPayload,
   ProjectRemovedEventPayload,
 } from "./schemas";
@@ -17,7 +19,12 @@ import {
   projectCreated,
   projectRemoved,
 } from "./payload-examples";
-import { deploymentProperties, projectProperties } from "./utils";
+import {
+  deploymentProperties,
+  domainProperties,
+  integrationConfigProperties,
+  projectProperties,
+} from "./utils";
 import { WebhookEventTypeSchema } from "./types";
 
 export const onDeploymentCreated: EventSpecification<DeploymentCreatedEventPayload> = {
@@ -88,4 +95,25 @@ export const onProjectRemoved: EventSpecification<ProjectRemovedEventPayload> = 
   examples: [projectRemoved],
   parsePayload: (payload) => payload as ProjectRemovedEventPayload,
   runProperties: (event) => projectProperties(event),
+};
+
+export const onIntegrationConfigScopeChangeConfirmed: EventSpecification<IntegrationConfigScopeChangeConfirmedEventPayload> =
+  {
+    name: WebhookEventTypeSchema.enum["integration-configuration.scope-change-confirmed"],
+    title: "On Integration Config Scope Change Confirmed",
+    source: "vercel.app",
+    icon: "vercel",
+    examples: [projectRemoved],
+    parsePayload: (payload) => payload as IntegrationConfigScopeChangeConfirmedEventPayload,
+    runProperties: (event) => integrationConfigProperties(event),
+  };
+
+export const onDomainCreated: EventSpecification<DomainCreatedEventPayload> = {
+  name: WebhookEventTypeSchema.enum["domain.created"],
+  title: "On Domain Created",
+  source: "vercel.app",
+  icon: "vercel",
+  examples: [projectRemoved],
+  parsePayload: (payload) => payload as DomainCreatedEventPayload,
+  runProperties: (event) => domainProperties(event),
 };

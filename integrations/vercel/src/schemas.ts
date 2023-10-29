@@ -145,6 +145,67 @@ export type ProjectRemovedEventPayload = WebhookEventPayload<
 
 export type ProjectEventPayload = ProjectCreatedEventPayload | ProjectRemovedEventPayload;
 
-export const WebhookEventSchema = z.union([DeploymentEventSchema, ProjectEventSchema]);
+// Integration Configuration
+const IntegrationConfigPayloadBaseSchema = z.object({
+  user: z.object({
+    id: z.string(),
+  }),
+  team: z
+    .object({
+      id: z.string().optional(),
+    })
+    .optional(),
+});
+
+const IntegrationConfigScopeChangeConfirmedEventSchema = WebhookEventBaseSchema.extend({
+  type: z.literal(WebhookEventTypeSchema.enum["integration-configuration.scope-change-confirmed"]),
+  payload: IntegrationConfigPayloadBaseSchema.extend({
+    configuration: z.object({
+      id: z.string(),
+      scopes: z.array(z.string()),
+    }),
+  }),
+});
+
+const IntegrationConfigEventSchema = z.discriminatedUnion("type", [
+  IntegrationConfigScopeChangeConfirmedEventSchema,
+]);
+
+export type IntegrationConfigScopeChangeConfirmedEventPayload = WebhookEventPayload<
+  z.infer<typeof IntegrationConfigEventSchema>
+>;
+
+export type IntegrationConfigEventPayload = IntegrationConfigScopeChangeConfirmedEventPayload;
+
+// Domain
+const DomainCreatedEventSchema = WebhookEventBaseSchema.extend({
+  type: z.literal(WebhookEventTypeSchema.enum["domain.created"]),
+  payload: z.object({
+    user: z.object({
+      id: z.string(),
+    }),
+    team: z
+      .object({
+        id: z.string().optional(),
+      })
+      .optional(),
+    domain: z.object({
+      name: z.string(),
+      delegated: z.boolean(),
+    }),
+  }),
+});
+
+export type DomainCreatedEventPayload = WebhookEventPayload<
+  z.infer<typeof DomainCreatedEventSchema>
+>;
+
+// All Webhook Events
+export const WebhookEventSchema = z.union([
+  DeploymentEventSchema,
+  ProjectEventSchema,
+  IntegrationConfigEventSchema,
+  DomainCreatedEventSchema,
+]);
 
 export type WebhookEvent = z.infer<typeof WebhookEventSchema>;

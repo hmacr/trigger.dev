@@ -1,5 +1,10 @@
 import crypto from "crypto";
-import { DeploymentEventPayload, ProjectEventPayload } from "./schemas";
+import {
+  DeploymentEventPayload,
+  DomainCreatedEventPayload,
+  IntegrationConfigEventPayload,
+  ProjectEventPayload,
+} from "./schemas";
 
 export function sha1(data: Buffer, secret: string): string {
   return crypto.createHmac("sha1", secret).update(data).digest("hex");
@@ -37,6 +42,28 @@ export const projectProperties = (payload: ProjectEventPayload) => {
     {
       label: "Project Name",
       text: payload.project.name,
+    },
+  ];
+};
+
+export const integrationConfigProperties = (payload: IntegrationConfigEventPayload) => {
+  return [
+    {
+      label: "Configuration ID",
+      text: payload.configuration.id,
+    },
+  ];
+};
+
+export const domainProperties = (payload: DomainCreatedEventPayload) => {
+  return [
+    {
+      label: "Domain Name",
+      text: payload.domain.name,
+    },
+    {
+      label: "Domain Delegated",
+      text: `${payload.domain.delegated}`,
     },
   ];
 };

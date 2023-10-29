@@ -145,4 +145,30 @@ const vercelOauth = new Vercel({
 //   },
 // });
 
+// client.defineJob({
+//   id: "vercel-integration-config-scope-change-confirmed",
+//   name: "Vercel Integration Config Scope Change Confirmed",
+//   version: "0.1.0",
+//   trigger: vercel.onIntegrationConfigScopeChangeConfirmed({
+//     teamId: "team_kTDbLdHFZ0x7HU66LRgZCfqg",
+//   }),
+//   run: async (payload, io, ctx) => {
+//     io.logger.info("project integration config scope change confirmed event received");
+//     io.logger.info(JSON.stringify(payload));
+//   },
+// });
+
+client.defineJob({
+  id: "vercel-domain-created",
+  name: "Vercel Domain Created",
+  version: "0.1.0",
+  trigger: vercel.onDomainCreated({
+    teamId: "team_kTDbLdHFZ0x7HU66LRgZCfqg",
+  }),
+  run: async (payload, io, ctx) => {
+    io.logger.info("domain created event received");
+    io.logger.info(JSON.stringify(payload));
+  },
+});
+
 createExpressServer(client);
